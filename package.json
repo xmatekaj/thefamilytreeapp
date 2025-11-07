@@ -1,0 +1,16 @@
+{
+  "name": "thefamilytreeapp",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "shared-core",
+    "ui",
+    "desktop"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=ui",
+    "dev:desktop": "npm run tauri dev --workspace=desktop",
+    "build:web": "npm run build --workspace=ui",
+    "build:desktop": "npm run tauri build --workspace=desktop"
+  }
+}
