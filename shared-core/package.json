@@ -1,0 +1,12 @@
+{
+  "name": "@familytree/shared-core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./models": "./models/index.js",
+    "./database": "./database/index.js",
+    "./gedcom": "./gedcom/index.js"
+  }
+}
