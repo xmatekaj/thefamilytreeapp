@@ -13,88 +13,60 @@ export function PersonNode({ data, isConnectable }) {
       overflow: 'hidden'
     }}>
       {/* Parent connections - top */}
-      <Handle
-        type="target"
-        position={Position.Top}
-        id="parent"
-        isConnectable={isConnectable}
-        style={{ background: '#10b981', width: '10px', height: '10px' }}
-      />
-      
-      {/* Spouse connections - left and right - BOTH source and target */}
-      <Handle
-        type="source"
-        position={Position.Left}
-        id="spouse-left"
-        isConnectable={isConnectable}
-        style={{ 
-          background: '#ef4444', 
-          width: '24px', 
-          height: '24px',
-          border: '3px solid white',
-          borderRadius: '50%',
-          top: '50%',
-          left: '-12px',
-          cursor: 'crosshair',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-          zIndex: 10,
-        }}
-      />
-      <Handle
-        type="target"
-        position={Position.Left}
-        id="spouse-left"
-        isConnectable={isConnectable}
-        style={{ 
-          background: '#ef4444', 
-          width: '24px', 
-          height: '24px',
-          border: '3px solid white',
-          borderRadius: '50%',
-          top: '50%',
-          left: '-12px',
-          cursor: 'crosshair',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-          zIndex: 10,
-        }}
-      />
-      
-      <Handle
-        type="source"
-        position={Position.Right}
-        id="spouse-right"
-        isConnectable={isConnectable}
-        style={{ 
-          background: '#ef4444', 
-          width: '24px', 
-          height: '24px',
-          border: '3px solid white',
-          borderRadius: '50%',
-          top: '50%',
-          right: '-12px',
-          cursor: 'crosshair',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-          zIndex: 10,
-        }}
-      />
-      <Handle
-        type="target"
-        position={Position.Right}
-        id="spouse-right"
-        isConnectable={isConnectable}
-        style={{ 
-          background: '#ef4444', 
-          width: '24px', 
-          height: '24px',
-          border: '3px solid white',
-          borderRadius: '50%',
-          top: '50%',
-          right: '-12px',
-          cursor: 'crosshair',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-          zIndex: 10,
-        }}
-      />
+<Handle
+  type="target"
+  position={Position.Top}
+  id="parent"
+  isConnectable={isConnectable}
+  style={{ background: '#10b981', width: '16px', height: '16px', borderRadius: '50%' }}
+/>
+
+{/* Left spouse handle */}
+<Handle
+  type="source"
+  position={Position.Left}
+  id="spouse-left"
+  isConnectable={isConnectable}
+  style={{ 
+    background: '#ef4444', 
+    width: '16px', 
+    height: '16px',
+    border: '2px solid white',
+    borderRadius: '50%',
+    top: '50%',
+    left: '-8px',
+    cursor: 'crosshair',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+  }}
+/>
+
+{/* Right spouse handle */}
+<Handle
+  type="target"
+  position={Position.Right}
+  id="spouse-right"
+  isConnectable={isConnectable}
+  style={{ 
+    background: '#ef4444', 
+    width: '16px', 
+    height: '16px',
+    border: '2px solid white',
+    borderRadius: '50%',
+    top: '50%',
+    right: '-8px',
+    cursor: 'crosshair',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+  }}
+/>
+
+{/* Children connections - bottom */}
+<Handle
+  type="source"
+  position={Position.Bottom}
+  id="child"
+  isConnectable={isConnectable}
+  style={{ background: '#3b82f6', width: '16px', height: '16px', borderRadius: '50%' }}
+/>
       
       {/* Photo frame */}
       <div style={{
@@ -144,15 +116,6 @@ export function PersonNode({ data, isConnectable }) {
           </div>
         )}
       </div>
-
-      {/* Children connections - bottom */}
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="child"
-        isConnectable={isConnectable}
-        style={{ background: '#3b82f6', width: '10px', height: '10px' }}
-      />
     </div>
   );
 }

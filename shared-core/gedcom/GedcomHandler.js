@@ -3,34 +3,59 @@ import { Person, Relationship, RelationType, SpouseRelationType } from '../model
 export class GedcomHandler {
   // Export family tree data to GEDCOM format
   static export(persons, relationships) {
-    let gedcom = '0 HEAD\n';
-    gedcom += '1 SOUR thefamilytreeapp.com\n';
-    gedcom += '1 GEDC\n';
-    gedcom += '2 VERS 5.5.1\n';
-    gedcom += '2 FORM LINEAGE-LINKED\n';
-    gedcom += '1 CHAR UTF-8\n';
+  let gedcom = '0 HEAD\n';
+  gedcom += '1 SOUR thefamilytreeapp.com\n';
+  gedcom += '1 GEDC\n';
+  gedcom += '2 VERS 5.5.1\n';
+  gedcom += '2 FORM LINEAGE-LINKED\n';
+  gedcom += '1 CHAR UTF-8\n';
 
-    // Add individuals
-    persons.forEach((person, index) => {
-      gedcom += `0 @I${index + 1}@ INDI\n`;
-      if (person.firstName || person.lastName) {
-        gedcom += `1 NAME ${person.firstName} /${person.lastName}/\n`;
-      }
-      if (person.birthDate) {
-        gedcom += `1 BIRT\n`;
-        gedcom += `2 DATE ${person.birthDate}\n`;
-      }
-      if (person.deathDate) {
-        gedcom += `1 DEAT\n`;
-        gedcom += `2 DATE ${person.deathDate}\n`;
-      }
-      // Store our internal ID as a note
-      gedcom += `1 NOTE @${person.id}@\n`;
-    });
+  // Create person ID map
+  const personIdMap = new Map();
+  persons.forEach((person, index) => {
+    personIdMap.set(person.id, `I${index + 1}`);
+  });
 
-    gedcom += '0 TRLR\n';
-    return gedcom;
-  }
+  // Add individuals
+  persons.forEach((person, index) => {
+    gedcom += `0 @I${index + 1}@ INDI\n`;
+    if (person.firstName || person.lastName) {
+      gedcom += `1 NAME ${person.firstName} /${person.lastName}/\n`;
+    }
+    if (person.birthDate) {
+      gedcom += `1 BIRT\n`;
+      gedcom += `2 DATE ${person.birthDate}\n`;
+    }
+    if (person.deathDate) {
+      gedcom += `1 DEAT\n`;
+      gedcom += `2 DATE ${person.deathDate}\n`;
+    }
+    gedcom += `1 NOTE @${person.id}@\n`;
+  });
+
+  // Add families (spouse relationships)
+  const spouseRelationships = relationships.filter(r => r.type === 'spouse');
+  spouseRelationships.forEach((rel, index) => {
+    gedcom += `0 @F${index + 1}@ FAM\n`;
+    gedcom += `1 HUSB @${personIdMap.get(rel.fromPersonId)}@\n`;
+    gedcom += `1 WIFE @${personIdMap.get(rel.toPersonId)}@\n`;
+    
+    if (rel.startDate) {
+      gedcom += `1 MARR\n`;
+      gedcom += `2 DATE ${rel.startDate}\n`;
+    }
+    if (rel.endDate) {
+      gedcom += `1 DIV\n`;
+      gedcom += `2 DATE ${rel.endDate}\n`;
+    }
+    if (rel.spouseType) {
+      gedcom += `1 NOTE Type: ${rel.spouseType}\n`;
+    }
+  });
+
+  gedcom += '0 TRLR\n';
+  return gedcom;
+}
 
   // Import GEDCOM format to family tree data
   static import(gedcomText) {

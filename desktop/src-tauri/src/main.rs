@@ -40,8 +40,6 @@ struct Relationship {
     rel_type: String,
     #[serde(rename = "spouseType")]
     spouse_type: Option<String>,
-    #[serde(rename = "marriageNumber")]
-    marriage_number: Option<i32>,
     #[serde(rename = "startDate")]
     start_date: Option<String>,
     #[serde(rename = "endDate")]

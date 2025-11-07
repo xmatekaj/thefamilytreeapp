@@ -163,11 +163,7 @@ export function FamilyTreeFlow() {
           } else {
             label = `Spouse`;
           }
-          
-          if (rel.marriageNumber) {
-            label += ` #${rel.marriageNumber}`;
-          }
-          
+                   
           if (rel.startDate) {
             label += ` (${rel.startDate}`;
             if (rel.endDate) {

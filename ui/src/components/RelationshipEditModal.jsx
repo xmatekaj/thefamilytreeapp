@@ -5,7 +5,6 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
     spouseType: 'married',
     startDate: '',
     endDate: '',
-    marriageNumber: 1,
   });
 
   useEffect(() => {
@@ -14,7 +13,6 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
         spouseType: relationship.data?.spouseType || 'married',
         startDate: relationship.data?.startDate || '',
         endDate: relationship.data?.endDate || '',
-        marriageNumber: relationship.data?.marriageNumber || 1,
       });
     }
   }, [relationship]);
@@ -25,7 +23,7 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
   };
 
   const handleChange = (e) => {
-    const value = e.target.name === 'marriageNumber' ? parseInt(e.target.value) : e.target.value;
+    const value = e.target.value;
     setFormData({
       ...formData,
       [e.target.name]: value,
@@ -83,21 +81,6 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
               {formData.spouseType === 'married' ? 'Marriage Number' : 'Relationship Number'}
             </label>
-            <input
-              type="number"
-              name="marriageNumber"
-              value={formData.marriageNumber}
-              onChange={handleChange}
-              min="1"
-              max="10"
-              style={{
-                width: '100%',
-                padding: '10px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '14px',
-              }}
-            />
             <small style={{ color: '#666' }}>
               For tracking multiple {formData.spouseType === 'married' ? 'marriages' : 'relationships'}
             </small>
