@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Gender } from '../../shared-core/models/Person.js';
+import { Gender } from '../../../shared-core/models/Person.js';
 
 export function PersonEditModal({ person, onSave, onCancel, onDelete, t }) {
   const [formData, setFormData] = useState({
