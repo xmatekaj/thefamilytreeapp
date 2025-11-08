@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BaseEdge, EdgeLabelRenderer, getStraightPath } from 'reactflow';
+import { BaseEdge, EdgeLabelRenderer, getBezierPath } from 'reactflow';
 
 export function RelationshipEdge({
   id,
@@ -16,12 +16,14 @@ export function RelationshipEdge({
 }) {
   const [isHovering, setIsHovering] = useState(false);
   
-  // Use straight path for connections
-  const [edgePath, labelX, labelY] = getStraightPath({
+  // Use bezier curves for better looking connections
+  const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
+    sourcePosition,
     targetX,
     targetY,
+    targetPosition,
   });
 
   const handleDelete = (event) => {
@@ -73,16 +75,15 @@ export function RelationshipEdge({
               <button
                 onClick={handleDelete}
                 style={{
-                  background: '#ef4444',
+                  background: 'transparent',
                   border: 'none',
-                  borderRadius: '3px',
-                  color: 'white',
+                  color: '#ef4444',
                   cursor: 'pointer',
-                  padding: '2px 6px',
-                  fontSize: '12px',
+                  padding: '2px 4px',
+                  fontSize: '16px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  lineHeight: 1,
                 }}
                 title="Delete connection"
               >
