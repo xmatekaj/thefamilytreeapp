@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
+import { Gender } from '../../shared-core/models/Person.js';
 
-export function PersonEditModal({ person, onSave, onCancel, onDelete }) {
+export function PersonEditModal({ person, onSave, onCancel, onDelete, t }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     birthDate: '',
     deathDate: '',
     photo: '',
+    gender: '',
   });
 
   useEffect(() => {
@@ -17,6 +19,7 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete }) {
         birthDate: person.data.birthDate || '',
         deathDate: person.data.deathDate || '',
         photo: person.data.photo || '',
+        gender: person.data.gender || '',
       });
     }
   }, [person]);
@@ -56,12 +59,12 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete }) {
         maxHeight: '90vh',
         overflow: 'auto',
       }}>
-        <h2 style={{ marginTop: 0 }}>Edit Person</h2>
+        <h2 style={{ marginTop: 0 }}>{t('editPerson')}</h2>
         
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              First Name
+              {t('firstName')}
             </label>
             <input
               type="text"
@@ -81,7 +84,7 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete }) {
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Last Name
+              {t('lastName')}
             </label>
             <input
               type="text"
@@ -101,7 +104,32 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete }) {
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Birth Date
+              {t('gender')}
+            </label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '14px',
+              }}
+            >
+              <option value="">{t('other')}</option>
+              <option value={Gender.MALE}>{t('male')}</option>
+              <option value={Gender.FEMALE}>{t('female')}</option>
+            </select>
+            <small style={{ color: '#666' }}>
+              {t('male')}: Blue border, {t('female')}: Pink border
+            </small>
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+              {t('birthDate')}
             </label>
             <input
               type="date"
@@ -120,7 +148,7 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete }) {
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Death Date
+              {t('deathDate')}
             </label>
             <input
               type="date"
@@ -139,14 +167,14 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete }) {
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Photo URL (optional)
+              {t('photoOptional')}
             </label>
             <input
               type="text"
               name="photo"
               value={formData.photo}
               onChange={handleChange}
-              placeholder="Enter image URL"
+              placeholder={t('photoPlaceholder')}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -156,11 +184,11 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete }) {
               }}
             />
             <small style={{ color: '#666' }}>
-              Drag person vertically to change generation/layer
+              {t('dragPersonToChangeGeneration')}
             </small>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
             <button
               type="button"
               onClick={() => onDelete(person.id)}
@@ -170,45 +198,42 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete }) {
                 color: 'white',
                 border: 'none',
                 borderRadius: '4px',
+                fontSize: '14px',
                 cursor: 'pointer',
-                fontWeight: 'bold',
+                marginRight: 'auto',
               }}
             >
-              Delete
+              {t('delete')}
             </button>
-            
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                type="button"
-                onClick={onCancel}
-                style={{
-                  padding: '10px 20px',
-                  background: '#6b7280',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                }}
-              >
-                Cancel
-              </button>
-              
-              <button
-                type="submit"
-                style={{
-                  padding: '10px 20px',
-                  background: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                }}
-              >
-                Save
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={onCancel}
+              style={{
+                padding: '10px 20px',
+                background: '#e5e7eb',
+                color: '#374151',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '14px',
+                cursor: 'pointer',
+              }}
+            >
+              {t('cancel')}
+            </button>
+            <button
+              type="submit"
+              style={{
+                padding: '10px 20px',
+                background: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '14px',
+                cursor: 'pointer',
+              }}
+            >
+              {t('save')}
+            </button>
           </div>
         </form>
       </div>

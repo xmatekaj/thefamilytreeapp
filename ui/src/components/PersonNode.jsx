@@ -1,11 +1,20 @@
 import { Handle, Position } from 'reactflow';
+import { Gender } from '../../shared-core/models/Person.js';
 
 export function PersonNode({ data, isConnectable }) {
   const photoPlaceholder = data.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBQaG90bzwvdGV4dD48L3N2Zz4=';
   
+  // Determine border color based on gender
+  let borderColor = '#333'; // Default
+  if (data.gender === Gender.MALE) {
+    borderColor = '#3b82f6'; // Blue
+  } else if (data.gender === Gender.FEMALE) {
+    borderColor = '#ec4899'; // Pink
+  }
+  
   return (
     <div style={{
-      border: '3px solid #333',
+      border: `3px solid ${borderColor}`,
       borderRadius: '4px',
       background: '#fff',
       width: '180px',
@@ -13,60 +22,61 @@ export function PersonNode({ data, isConnectable }) {
       overflow: 'hidden'
     }}>
       {/* Parent connections - top */}
-<Handle
-  type="target"
-  position={Position.Top}
-  id="parent"
-  isConnectable={isConnectable}
-  style={{ background: '#10b981', width: '16px', height: '16px', borderRadius: '50%' }}
-/>
-
-{/* Left spouse handle */}
-<Handle
-  type="source"
-  position={Position.Left}
-  id="spouse-left"
-  isConnectable={isConnectable}
-  style={{ 
-    background: '#ef4444', 
-    width: '16px', 
-    height: '16px',
-    border: '2px solid white',
-    borderRadius: '50%',
-    top: '50%',
-    left: '-8px',
-    cursor: 'crosshair',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-  }}
-/>
-
-{/* Right spouse handle */}
-<Handle
-  type="target"
-  position={Position.Right}
-  id="spouse-right"
-  isConnectable={isConnectable}
-  style={{ 
-    background: '#ef4444', 
-    width: '16px', 
-    height: '16px',
-    border: '2px solid white',
-    borderRadius: '50%',
-    top: '50%',
-    right: '-8px',
-    cursor: 'crosshair',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-  }}
-/>
-
-{/* Children connections - bottom */}
-<Handle
-  type="source"
-  position={Position.Bottom}
-  id="child"
-  isConnectable={isConnectable}
-  style={{ background: '#3b82f6', width: '16px', height: '16px', borderRadius: '50%' }}
-/>
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="parent"
+        isConnectable={isConnectable}
+        style={{ 
+          background: '#10b981', 
+          width: '16px', 
+          height: '16px',
+          borderRadius: '50%',
+          border: '2px solid white'
+        }}
+      />
+      
+      {/* Spouse connections - left side STARTS connections */}
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="spouse-left"
+        isConnectable={isConnectable}
+        isConnectableStart={true}
+        isConnectableEnd={false}
+        style={{ 
+          background: '#ef4444', 
+          width: '16px', 
+          height: '16px',
+          border: '2px solid white',
+          borderRadius: '50%',
+          top: '50%',
+          left: '-8px',
+          cursor: 'crosshair',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+        }}
+      />
+      
+      {/* Spouse connections - right side RECEIVES connections */}
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="spouse-right"
+        isConnectable={isConnectable}
+        isConnectableStart={false}
+        isConnectableEnd={true}
+        style={{ 
+          background: '#ef4444', 
+          width: '16px', 
+          height: '16px',
+          border: '2px solid white',
+          borderRadius: '50%',
+          top: '50%',
+          right: '-8px',
+          cursor: 'crosshair',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+        }}
+      />
       
       {/* Photo frame */}
       <div style={{
@@ -93,7 +103,7 @@ export function PersonNode({ data, isConnectable }) {
       <div style={{
         padding: '12px',
         background: '#fff',
-        borderTop: '2px solid #333'
+        borderTop: `2px solid ${borderColor}`
       }}>
         <div style={{ 
           fontWeight: 'bold', 
@@ -116,6 +126,21 @@ export function PersonNode({ data, isConnectable }) {
           </div>
         )}
       </div>
+
+      {/* Children connections - bottom */}
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="child"
+        isConnectable={isConnectable}
+        style={{ 
+          background: '#3b82f6', 
+          width: '16px', 
+          height: '16px',
+          borderRadius: '50%',
+          border: '2px solid white'
+        }}
+      />
     </div>
   );
 }

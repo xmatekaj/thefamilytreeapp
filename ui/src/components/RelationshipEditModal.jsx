@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete }) {
+export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete, t }) {
   const [formData, setFormData] = useState({
     spouseType: 'married',
     startDate: '',
@@ -23,10 +23,9 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
   };
 
   const handleChange = (e) => {
-    const value = e.target.value;
     setFormData({
       ...formData,
-      [e.target.name]: value,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -53,12 +52,12 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
         maxHeight: '90vh',
         overflow: 'auto',
       }}>
-        <h2 style={{ marginTop: 0 }}>Edit Relationship</h2>
+        <h2 style={{ marginTop: 0 }}>{t('editRelationship')}</h2>
         
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Relationship Type
+              {t('relationshipType')}
             </label>
             <select
               name="spouseType"
@@ -72,23 +71,14 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
                 fontSize: '14px',
               }}
             >
-              <option value="married">Marriage</option>
-              <option value="unmarried">Informal Relationship</option>
+              <option value="married">{t('marriage')}</option>
+              <option value="unmarried">{t('informalRelationship')}</option>
             </select>
           </div>
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              {formData.spouseType === 'married' ? 'Marriage Number' : 'Relationship Number'}
-            </label>
-            <small style={{ color: '#666' }}>
-              For tracking multiple {formData.spouseType === 'married' ? 'marriages' : 'relationships'}
-            </small>
-          </div>
-
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Start Date (From)
+              {t('startDate')}
             </label>
             <input
               type="date"
@@ -107,7 +97,7 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              End Date (To)
+              {t('endDate')}
             </label>
             <input
               type="date"
@@ -123,11 +113,11 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
               }}
             />
             <small style={{ color: '#666' }}>
-              Leave empty if relationship is ongoing
+              Leave empty if still ongoing
             </small>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
             <button
               type="button"
               onClick={() => onDelete(relationship.id)}
@@ -137,45 +127,42 @@ export function RelationshipEditModal({ relationship, onSave, onCancel, onDelete
                 color: 'white',
                 border: 'none',
                 borderRadius: '4px',
+                fontSize: '14px',
                 cursor: 'pointer',
-                fontWeight: 'bold',
+                marginRight: 'auto',
               }}
             >
-              Delete
+              {t('delete')}
             </button>
-            
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                type="button"
-                onClick={onCancel}
-                style={{
-                  padding: '10px 20px',
-                  background: '#6b7280',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                }}
-              >
-                Cancel
-              </button>
-              
-              <button
-                type="submit"
-                style={{
-                  padding: '10px 20px',
-                  background: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                }}
-              >
-                Save
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={onCancel}
+              style={{
+                padding: '10px 20px',
+                background: '#e5e7eb',
+                color: '#374151',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '14px',
+                cursor: 'pointer',
+              }}
+            >
+              {t('cancel')}
+            </button>
+            <button
+              type="submit"
+              style={{
+                padding: '10px 20px',
+                background: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '14px',
+                cursor: 'pointer',
+              }}
+            >
+              {t('save')}
+            </button>
           </div>
         </form>
       </div>
