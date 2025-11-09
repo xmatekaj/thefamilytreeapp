@@ -1,7 +1,7 @@
 import { Handle, Position } from 'reactflow';
 import { Gender } from '../../../shared-core/models/Person.js';
 
-export function PersonNode({ data, isConnectable }) {
+export function PersonNode({ data, isConnectable, selected }) {
   const photoPlaceholder = data.photo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTIwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBQaG90bzwvdGV4dD48L3N2Zz4=';
   
   // Determine border color based on gender
@@ -20,8 +20,11 @@ export function PersonNode({ data, isConnectable }) {
       borderRadius: '4px',
       background: '#fff',
       width: '180px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-      overflow: 'hidden'
+      boxShadow: selected 
+        ? '0 0 0 3px #3b82f6, 0 2px 8px rgba(0,0,0,0.15)'  // Blue glow when selected
+        : '0 2px 8px rgba(0,0,0,0.15)',
+      overflow: 'hidden',
+      transition: 'box-shadow 0.2s ease',
     }}>
       {/* Parent connections - top */}
       <Handle
@@ -39,7 +42,7 @@ export function PersonNode({ data, isConnectable }) {
         }}
       />
       
-      {/* Spouse LEFT - source only, but we'll allow reverse in connection validator */}
+      {/* Spouse LEFT - source only */}
       <Handle
         type="source"
         position={Position.Left}
@@ -57,7 +60,7 @@ export function PersonNode({ data, isConnectable }) {
         }}
       />
 
-      {/* Spouse RIGHT - target only, but we'll allow reverse in connection validator */}
+      {/* Spouse RIGHT - target only */}
       <Handle
         type="target"
         position={Position.Right}

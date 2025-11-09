@@ -789,6 +789,14 @@ export function FamilyTreeFlow() {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         isValidConnection={isValidConnection}
+        connectionMode="loose"
+        
+        // Multi-selection props
+        selectionOnDrag={true}
+        panOnDrag={[1, 2]}
+        selectionMode="partial"
+        multiSelectionKeyCode="Shift"
+        
         fitView
         connectionLineStyle={{ stroke: '#ef4444', strokeWidth: 3 }}
         connectionLineType="straight"
