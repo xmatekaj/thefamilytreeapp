@@ -27,8 +27,6 @@ const edgeTypes = {
   relationship: RelationshipEdge,
 };
 
-
-
 // Layout constants
 const VERTICAL_SPACING = 350; // Space between generations
 const HORIZONTAL_SPACING = 250; // Space between people in same generation
@@ -42,6 +40,7 @@ export function FamilyTreeFlow() {
   const [selectedRelationship, setSelectedRelationship] = useState(null);
   const [lang, setLang] = useState('en');
   const positionCounterRef = useRef({});
+  
   // Create translation function
   const t = (key) => getTranslation(lang, key);
 
@@ -62,44 +61,36 @@ export function FamilyTreeFlow() {
   // Snap Y position to nearest generation layer
   const snapToLayer = (y) => {
     const generation = Math.round((y - 100) / VERTICAL_SPACING);
-    // Allow any generation number (no clamping)
     return generation * VERTICAL_SPACING + 100;
   };
 
   // Get generation from Y position
   const getGenerationFromY = (y) => {
     const generation = Math.round((y - 100) / VERTICAL_SPACING);
-    // Allow any generation number (including negative for ancestors)
     return generation;
   };
 
   // Find empty space for new person
   const findEmptySpace = () => {
     if (nodes.length === 0) {
-      // First person - center of viewport at generation 0
       return { x: 400, y: 100, generation: 0 };
     }
 
-    // Try to find empty space in each generation
     for (let gen = 0; gen <= 5; gen++) {
       const nodesInGen = nodes.filter(n => n.data.generation === gen);
       
       if (nodesInGen.length === 0) {
-        // Empty generation - use it
         return { x: 100, y: gen * VERTICAL_SPACING + 100, generation: gen };
       }
       
-      // Find rightmost person in this generation
       const maxX = Math.max(...nodesInGen.map(n => n.position.x));
       const newX = maxX + HORIZONTAL_SPACING;
       
-      // If there's space (not too far right), use it
       if (newX < 2000) {
         return { x: newX, y: gen * VERTICAL_SPACING + 100, generation: gen };
       }
     }
 
-    // Fallback - add to generation 0
     const gen0Nodes = nodes.filter(n => n.data.generation === 0);
     const maxX = gen0Nodes.length > 0 ? Math.max(...gen0Nodes.map(n => n.position.x)) : 0;
     return { x: maxX + HORIZONTAL_SPACING, y: 100, generation: 0 };
@@ -115,19 +106,15 @@ export function FamilyTreeFlow() {
       console.log('Loaded persons:', persons.length);
       console.log('Loaded relationships:', relationships.length);
 
-      // Reset position counter
       positionCounterRef.current = {};
 
-      // Create nodes with saved positions
       const newNodes = persons.map(person => {
         let x, y;
         
-        // Use saved position if available
         if (person.positionX !== null && person.positionY !== null) {
           x = person.positionX;
           y = person.positionY;
         } else {
-          // Calculate new position
           const generation = person.generation || 0;
           x = 100;
           y = generation * VERTICAL_SPACING + 100;
@@ -143,26 +130,24 @@ export function FamilyTreeFlow() {
             birthDate: person.birthDate,
             deathDate: person.deathDate,
             photo: person.photo,
+            gender: person.gender,
             generation: person.generation || 0,
           },
           draggable: true,
         };
       });
 
-      // Convert relationships to edges
       const newEdges = relationships.map(rel => {
         let sourceHandle = 'child';
         let targetHandle = 'parent';
         let animated = false;
-        let label = getRelationshipLabel(rel.type);
+        let label = '';
         
-        // Determine handles based on relationship type
         if (rel.type === RelationType.SPOUSE) {
           sourceHandle = 'spouse-right';
           targetHandle = 'spouse-left';
           animated = true;
           
-          // Enhanced label for spouse relationships
           if (rel.spouseType === SpouseRelationType.MARRIED) {
             label = `Marriage`;
           } else if (rel.spouseType === SpouseRelationType.UNMARRIED) {
@@ -182,6 +167,7 @@ export function FamilyTreeFlow() {
         } else if (rel.type === RelationType.PARENT) {
           sourceHandle = 'child';
           targetHandle = 'parent';
+          label = '';
         } else if (rel.type === RelationType.SIBLING) {
           sourceHandle = 'spouse-right';
           targetHandle = 'spouse-left';
@@ -196,7 +182,7 @@ export function FamilyTreeFlow() {
           type: 'relationship',
           animated,
           data: {
-            label: rel.type === RelationType.PARENT ? '' : label,
+            label,
             color: rel.color,
             onDelete: handleDeleteRelationship,
             spouseType: rel.spouseType,
@@ -230,20 +216,36 @@ export function FamilyTreeFlow() {
     return labels[type] || type;
   };
 
-  // Custom connection validator - allow spouse connections
   const isValidConnection = useCallback((connection) => {
     console.log('Validating connection:', connection);
     
-    // Don't connect to self
     if (connection.source === connection.target) {
       console.log('Cannot connect to self');
       return false;
     }
     
-    // Allow any connection between different people
     console.log('Connection valid');
     return true;
   }, []);
+
+  // IMPORTANT: Define handleDeleteRelationship BEFORE onConnect
+  const handleDeleteRelationship = async (relationshipId) => {
+    if (!confirm('Are you sure you want to delete this relationship?')) {
+      return;
+    }
+    
+    try {
+      const db = dbService.getDatabase();
+      await db.deleteRelationship(relationshipId);
+      
+      setEdges((eds) => eds.filter(e => e.id !== relationshipId));
+      setPendingRelationship(null);
+      setSelectedRelationship(null);
+    } catch (error) {
+      console.error('Failed to delete relationship:', error);
+      alert('Failed to delete relationship: ' + error.message);
+    }
+  };
 
   const onConnect = useCallback(
     async (params) => {
@@ -256,10 +258,8 @@ export function FamilyTreeFlow() {
         
         const db = dbService.getDatabase();
         
-        // Determine relationship type based on handles
         let relType = RelationType.PARENT;
         
-        // Check if it's a spouse connection (any spouse handle involved)
         const sourceIsSpouse = params.sourceHandle?.includes('spouse');
         const targetIsSpouse = params.targetHandle?.includes('spouse');
         const isSpouseConnection = sourceIsSpouse && targetIsSpouse;
@@ -271,7 +271,7 @@ export function FamilyTreeFlow() {
           relType = RelationType.SPOUSE;
           console.log('-> SPOUSE CONNECTION DETECTED!');
         } else {
-          relType = RelationType.PARENT; // Default
+          relType = RelationType.PARENT;
           console.log('-> Default parent connection');
         }
         
@@ -285,7 +285,6 @@ export function FamilyTreeFlow() {
         await db.createRelationship(relationship);
         console.log('Relationship saved to database');
         
-        // If spouse relationship, open modal to set details
         if (relType === RelationType.SPOUSE) {
           const edge = {
             id: relationship.id,
@@ -308,13 +307,11 @@ export function FamilyTreeFlow() {
           
           setEdges((eds) => [...eds, edge]);
           
-          // Open relationship edit modal
           setPendingRelationship({
             id: relationship.id,
             edge: edge,
           });
         } else {
-          // For parent-child, just add the edge
           setEdges((eds) => [...eds, {
             id: relationship.id,
             source: params.source,
@@ -336,16 +333,14 @@ export function FamilyTreeFlow() {
         alert('Failed to create relationship: ' + error.message);
       }
     },
-    [setEdges, handleDeleteRelationship]
+    [setEdges]
   );
-
 
   const addPerson = async () => {
     try {
       console.log('Adding new person...');
       const db = dbService.getDatabase();
       
-      // Find empty space for new person
       const position = findEmptySpace();
       
       const person = new Person({
@@ -368,6 +363,7 @@ export function FamilyTreeFlow() {
           birthDate: person.birthDate,
           deathDate: person.deathDate,
           photo: person.photo,
+          gender: person.gender,
           generation: person.generation,
         },
         draggable: true,
@@ -442,6 +438,7 @@ export function FamilyTreeFlow() {
       
       await loadFamilyTree();
       alert('Import successful!');
+      event.target.value = '';
     } catch (error) {
       console.error('Failed to import JSON:', error);
       alert('Failed to import: ' + error.message);
@@ -455,6 +452,7 @@ export function FamilyTreeFlow() {
       const relationships = await db.getAllRelationships();
       
       const gedcom = GedcomHandler.export(persons, relationships);
+      
       const blob = new Blob([gedcom], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       
@@ -479,19 +477,11 @@ export function FamilyTreeFlow() {
       const data = GedcomHandler.import(text);
       
       const db = dbService.getDatabase();
-      
-      // Import persons
-      for (const person of data.persons) {
-        await db.createPerson(person);
-      }
-      
-      // Import relationships
-      for (const relationship of data.relationships) {
-        await db.createRelationship(relationship);
-      }
+      await db.importAll(data);
       
       await loadFamilyTree();
       alert('GEDCOM import successful!');
+      event.target.value = '';
     } catch (error) {
       console.error('Failed to import GEDCOM:', error);
       alert('Failed to import GEDCOM: ' + error.message);
@@ -503,7 +493,6 @@ export function FamilyTreeFlow() {
   }, []);
 
   const onEdgeClick = useCallback((event, edge) => {
-    // Only allow editing spouse relationships
     if (edge.data?.relType === RelationType.SPOUSE) {
       setSelectedRelationship(edge);
     }
@@ -519,11 +508,11 @@ export function FamilyTreeFlow() {
       person.birthDate = formData.birthDate;
       person.deathDate = formData.deathDate;
       person.photo = formData.photo;
+      person.gender = formData.gender;
       
       await db.updatePerson(person);
       setSelectedPerson(null);
       
-      // Update the node in the state
       setNodes((nds) => nds.map(n => {
         if (n.id === person.id) {
           return {
@@ -535,6 +524,7 @@ export function FamilyTreeFlow() {
               birthDate: person.birthDate,
               deathDate: person.deathDate,
               photo: person.photo,
+              gender: person.gender,
             },
           };
         }
@@ -554,17 +544,14 @@ export function FamilyTreeFlow() {
     try {
       const db = dbService.getDatabase();
       
-      // Delete related relationships
       const relationships = await db.getRelationshipsForPerson(personId);
       for (const rel of relationships) {
         await db.deleteRelationship(rel.id);
       }
       
-      // Delete person
       await db.deletePerson(personId);
       setSelectedPerson(null);
       
-      // Remove from state
       setNodes((nds) => nds.filter(n => n.id !== personId));
       setEdges((eds) => eds.filter(e => e.source !== personId && e.target !== personId));
     } catch (error) {
@@ -585,7 +572,6 @@ export function FamilyTreeFlow() {
       
       await db.updateRelationship(relationship);
       
-      // Update edge label
       let label = formData.spouseType === SpouseRelationType.MARRIED ? 'Marriage' : 'Relationship';
       if (formData.startDate) {
         label += ` (${formData.startDate}`;
@@ -620,31 +606,11 @@ export function FamilyTreeFlow() {
     }
   };
 
-  const handleDeleteRelationship = async (relationshipId) => {
-    if (!confirm('Are you sure you want to delete this relationship?')) {
-      return;
-    }
-    
-    try {
-      const db = dbService.getDatabase();
-      await db.deleteRelationship(relationshipId);
-      
-      setEdges((eds) => eds.filter(e => e.id !== relationshipId));
-      setPendingRelationship(null);
-      setSelectedRelationship(null);
-    } catch (error) {
-      console.error('Failed to delete relationship:', error);
-      alert('Failed to delete relationship: ' + error.message);
-    }
-  };
-
-  // Save position and snap to layer when node drag ends
   const handleNodeDragStop = useCallback(async (event, node) => {
     try {
       const db = dbService.getDatabase();
       const person = await db.getPerson(node.id);
       
-      // Snap Y to nearest layer
       const snappedY = snapToLayer(node.position.y);
       const newGeneration = getGenerationFromY(snappedY);
       
@@ -655,7 +621,6 @@ export function FamilyTreeFlow() {
       await db.updatePerson(person);
       console.log(`Saved position for ${person.firstName}: (${person.positionX}, ${person.positionY}), generation: ${person.generation}`);
       
-      // Update node position to snapped position
       setNodes((nds) => nds.map(n => {
         if (n.id === node.id) {
           return {
@@ -678,73 +643,180 @@ export function FamilyTreeFlow() {
     return <div style={{ padding: '20px' }}>Loading database...</div>;
   }
 
-  // Get relationship for modal
   const relationshipForModal = pendingRelationship || selectedRelationship;
 
   return (
-  <div style={{ width: '100vw', height: '100vh' }}>
-    {/* Buttons at top left */}
-    <div style={{ 
-      position: 'absolute', 
-      top: 10, 
-      left: 10, 
-      zIndex: 10,
-      display: 'flex',
-      gap: '10px',
-      flexWrap: 'wrap',
-    }}>
-      {/* ... all buttons ... */}
-    </div>
-    
-    {/* Instructions below buttons */}
-    <div style={{ 
-      position: 'absolute', 
-      top: 120,  // Below buttons
-      left: 10, 
-      zIndex: 10,
-      background: 'white',
-      padding: '12px',
-      borderRadius: '4px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-      fontSize: '12px',
-    }}>
-      <div><strong>Instructions:</strong></div>
-      <div>• Click person to edit name/dates</div>
-      <div>• Drag person - auto-snaps to layer</div>
-      <div>• Blue → Green = parent-child</div>
-      <div>• Red → Red = spouse (SAME SIZE red dots)</div>
-      <div>• Click spouse line to edit type/dates</div>
-    </div>
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <div style={{ 
+        position: 'absolute', 
+        top: 10, 
+        left: 10, 
+        zIndex: 10,
+        display: 'flex',
+        gap: '10px',
+        flexWrap: 'wrap',
+      }}>
+        <button 
+          onClick={addPerson} 
+          style={{ 
+            padding: '10px 20px', 
+            cursor: 'pointer',
+            background: '#3b82f6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            fontWeight: 'bold',
+          }}
+        >
+          + Add Person
+        </button>
+        
+        <button 
+          onClick={exportJSON} 
+          style={{ 
+            padding: '10px 20px', 
+            cursor: 'pointer',
+            background: '#10b981',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            fontWeight: 'bold',
+          }}
+        >
+          Export JSON
+        </button>
+        
+        <label style={{ 
+          padding: '10px 20px', 
+          cursor: 'pointer',
+          background: '#8b5cf6',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          fontWeight: 'bold',
+        }}>
+          Import JSON
+          <input 
+            type="file" 
+            accept=".json" 
+            onChange={importJSON} 
+            style={{ display: 'none' }}
+          />
+        </label>
+        
+        <button 
+          onClick={exportGEDCOM} 
+          style={{ 
+            padding: '10px 20px', 
+            cursor: 'pointer',
+            background: '#f59e0b',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            fontWeight: 'bold',
+          }}
+        >
+          Export GEDCOM
+        </button>
+        
+        <label style={{ 
+          padding: '10px 20px', 
+          cursor: 'pointer',
+          background: '#ec4899',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          fontWeight: 'bold',
+        }}>
+          Import GEDCOM
+          <input 
+            type="file" 
+            accept=".ged" 
+            onChange={importGEDCOM} 
+            style={{ display: 'none' }}
+          />
+        </label>
+        
+        <button 
+          onClick={clearDatabase} 
+          style={{ 
+            padding: '10px 20px', 
+            cursor: 'pointer',
+            background: '#ef4444',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            fontWeight: 'bold',
+          }}
+        >
+          Clear Database
+        </button>
+      </div>
+      
+      <div style={{ 
+        position: 'absolute', 
+        top: 70, 
+        left: 10, 
+        zIndex: 10,
+        background: 'white',
+        padding: '12px',
+        borderRadius: '4px',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        fontSize: '12px',
+      }}>
+        <div><strong>Instructions:</strong></div>
+        <div>• Click person to edit name/dates</div>
+        <div>• Drag person - auto-snaps to layer</div>
+        <div>• Blue → Green = parent-child</div>
+        <div>• Red → Red = spouse (same size dots)</div>
+        <div>• Click spouse line to edit type/dates</div>
+      </div>
 
-    {/* Language selector - TOP RIGHT - increased z-index */}
-    <LanguageSelector 
-      currentLang={lang} 
-      onLanguageChange={setLang} 
-    />
-    
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onNodeClick={onNodeClick}
-      onEdgeClick={onEdgeClick}
-      onNodeDragStop={handleNodeDragStop}
-      nodeTypes={nodeTypes}
-      edgeTypes={edgeTypes}
-      isValidConnection={isValidConnection}
-      fitView
-      connectionLineStyle={{ stroke: '#ef4444', strokeWidth: 3 }}
-      connectionLineType="straight"
-    >
-      <Background />
-      <Controls />
-      <MiniMap />
-    </ReactFlow>
-    
-    {/* Modals */}
-  </div>
-);
-
+      <LanguageSelector 
+        currentLang={lang} 
+        onLanguageChange={setLang} 
+      />
+      
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeClick={onNodeClick}
+        onEdgeClick={onEdgeClick}
+        onNodeDragStop={handleNodeDragStop}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        isValidConnection={isValidConnection}
+        fitView
+        connectionLineStyle={{ stroke: '#ef4444', strokeWidth: 3 }}
+        connectionLineType="straight"
+      >
+        <Background />
+        <Controls />
+        <MiniMap />
+      </ReactFlow>
+      
+      <PersonEditModal
+        person={selectedPerson}
+        onSave={handleSavePerson}
+        onCancel={() => setSelectedPerson(null)}
+        onDelete={handleDeletePerson}
+        t={t}
+        lang={lang}
+      />
+      
+      <RelationshipEditModal
+        relationship={relationshipForModal}
+        onSave={handleSaveRelationship}
+        onCancel={() => {
+          setPendingRelationship(null);
+          setSelectedRelationship(null);
+        }}
+        onDelete={handleDeleteRelationship}
+        t={t}
+      />
+    </div>
+  );
 }

@@ -4,7 +4,7 @@ export function LanguageSelector({ currentLang, onLanguageChange }) {
       position: 'absolute',
       top: '20px',
       right: '20px',
-      zIndex: 100, // Increased from 5 to 100
+      zIndex: 100,
       background: 'white',
       padding: '8px 12px',
       borderRadius: '6px',
@@ -21,8 +21,8 @@ export function LanguageSelector({ currentLang, onLanguageChange }) {
           outline: 'none',
         }}
       >
-        <option value="en">ðŸ‡¬ðŸ‡§ English</option>
-        <option value="pl">ðŸ‡µðŸ‡± Polski</option>
+        <option value="en">English</option>
+        <option value="pl">Polski</option>
       </select>
     </div>
   );
