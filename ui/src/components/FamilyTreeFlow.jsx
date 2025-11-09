@@ -189,9 +189,9 @@ export function FamilyTreeFlow() {
           type: 'relationship',
           animated,
           data: {
-            label,
+            label: rel.type === RelationType.PARENT ? '' : label,
             color: rel.color,
-            marriageNumber: rel.marriageNumber,
+            onDelete: handleDeleteRelationship,
             spouseType: rel.spouseType,
             startDate: rel.startDate,
             endDate: rel.endDate,
@@ -286,7 +286,7 @@ export function FamilyTreeFlow() {
             data: {
               label: 'Marriage #1',
               color: relationship.color,
-              marriageNumber: 1,
+              onDelete: handleDeleteRelationship,
               spouseType: SpouseRelationType.MARRIED,
               startDate: null,
               endDate: null,
@@ -312,7 +312,8 @@ export function FamilyTreeFlow() {
             type: 'relationship',
             animated: false,
             data: {
-              label: getRelationshipLabel(relType),
+              label: '',
+              onDelete: handleDeleteRelationship,
               color: relationship.color,
               relType: relType,
             },
@@ -566,7 +567,6 @@ export function FamilyTreeFlow() {
       const relationship = await db.getRelationship(relationshipId);
       
       relationship.spouseType = formData.spouseType;
-      relationship.marriageNumber = formData.marriageNumber;
       relationship.startDate = formData.startDate;
       relationship.endDate = formData.endDate;
       
@@ -574,9 +574,6 @@ export function FamilyTreeFlow() {
       
       // Update edge label
       let label = formData.spouseType === SpouseRelationType.MARRIED ? 'Marriage' : 'Relationship';
-      if (formData.marriageNumber) {
-        label += ` #${formData.marriageNumber}`;
-      }
       if (formData.startDate) {
         label += ` (${formData.startDate}`;
         if (formData.endDate) {
@@ -594,7 +591,6 @@ export function FamilyTreeFlow() {
               ...e.data,
               label,
               spouseType: formData.spouseType,
-              marriageNumber: formData.marriageNumber,
               startDate: formData.startDate,
               endDate: formData.endDate,
             },
