@@ -30,9 +30,12 @@ export const translations = {
     gender: 'Gender',
     male: 'Male',
     female: 'Female',
-    other: 'Other',
+    other: 'Undefined',
     blue_border: 'Blue border',
     pink_border: 'Pink border',
+    maidenName: 'Maiden Name (optional)',
+    maidenNamePlaceholder: 'Birth surname',
+    maidenNameHint: 'Surname before marriage',
     
     // Person defaults
     newPerson: 'New Person',
@@ -127,7 +130,10 @@ export const translations = {
     female: 'Kobieta',
     blue_border: 'niebieska ramka',
     pink_border: 'różowa ramka',
-    other: 'Inna',
+    other: 'Nieokreślona',
+    maidenName: 'Nazwisko panieńskie (opcjonalne)',
+    maidenNamePlaceholder: 'Nazwisko rodowe',
+    maidenNameHint: 'Nazwisko przed ślubem',
     
     // Person defaults
     newPerson: 'Nowa Osoba',

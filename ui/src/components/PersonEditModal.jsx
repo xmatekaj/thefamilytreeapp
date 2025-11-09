@@ -5,28 +5,55 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete, t, lang })
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    maidenName: '',
     birthDate: '',
     deathDate: '',
     photo: '',
     gender: '',
   });
 
+  // Convert YYYY-MM-DD to DD-MM-YYYY for Polish display
+  const formatDateForDisplay = (date) => {
+    if (!date) return '';
+    if (lang === 'pl' && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [year, month, day] = date.split('-');
+      return `${day}-${month}-${year}`;
+    }
+    return date;
+  };
+
+  // Convert DD-MM-YYYY back to YYYY-MM-DD for storage
+  const formatDateForStorage = (date) => {
+    if (!date) return '';
+    if (lang === 'pl' && date.match(/^\d{2}-\d{2}-\d{4}$/)) {
+      const [day, month, year] = date.split('-');
+      return `${year}-${month}-${day}`;
+    }
+    return date;
+  };
+
   useEffect(() => {
     if (person) {
       setFormData({
         firstName: person.data.firstName || '',
         lastName: person.data.lastName || '',
-        birthDate: person.data.birthDate || '',
-        deathDate: person.data.deathDate || '',
+        maidenName: person.data.maidenName || '',
+        birthDate: formatDateForDisplay(person.data.birthDate || ''),
+        deathDate: formatDateForDisplay(person.data.deathDate || ''),
         photo: person.data.photo || '',
         gender: person.data.gender || '',
       });
     }
-  }, [person]);
+  }, [person, lang]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData);
+    // Convert dates back to storage format before saving
+    onSave({
+      ...formData,
+      birthDate: formatDateForStorage(formData.birthDate),
+      deathDate: formatDateForStorage(formData.deathDate),
+    });
   };
 
   const handleChange = (e) => {
@@ -123,9 +150,35 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete, t, lang })
               <option value={Gender.FEMALE}>{t('female')}</option>
             </select>
             <small style={{ color: '#666' }}>
-              {t('male')}: {t('blue_border')}, {t('female')}: {t('pink_border')}
+              {t('male')}: Blue border, {t('female')}: Pink border
             </small>
           </div>
+
+          {/* Maiden name field - only show for females */}
+          {formData.gender === Gender.FEMALE && (
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                {t('maidenName')}
+              </label>
+              <input
+                type="text"
+                name="maidenName"
+                value={formData.maidenName}
+                onChange={handleChange}
+                placeholder={t('maidenNamePlaceholder')}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                }}
+              />
+              <small style={{ color: '#666' }}>
+                {t('maidenNameHint')}
+              </small>
+            </div>
+          )}
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>

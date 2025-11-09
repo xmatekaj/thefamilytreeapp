@@ -22,11 +22,12 @@ export class Person {
     this.id = data.id || generateUUID();
     this.firstName = data.firstName || '';
     this.lastName = data.lastName || '';
-    this.birthDate = data.birthDate || null;
-    this.deathDate = data.deathDate || null;
-    this.photo = data.photo || null;
-    this.gender = data.gender || null; // Gender.MALE, Gender.FEMALE, Gender.OTHER
-    this.generation = data.generation || 0;
+    this.maidenName = data.maidenName || ''; 
+    this.birthDate = data.birthDate || null; // ISO date string
+    this.deathDate = data.deathDate || null; // ISO date string
+    this.photo = data.photo || null; // URL or base64
+    this.gender = data.gender || ''; // Gender enum
+    this.generation = data.generation || 0; // For vertical positioning
     this.positionX = data.positionX !== undefined ? data.positionX : null;
     this.positionY = data.positionY !== undefined ? data.positionY : null;
     this.createdAt = data.createdAt || new Date().toISOString();
@@ -38,6 +39,7 @@ export class Person {
       id: this.id,
       firstName: this.firstName,
       lastName: this.lastName,
+      maidenName: this.maidenName,
       birthDate: this.birthDate,
       deathDate: this.deathDate,
       photo: this.photo,

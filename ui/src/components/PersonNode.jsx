@@ -14,6 +14,12 @@ export function PersonNode({ data, isConnectable, selected }) {
   
   const handleSize = '20px'; // Same size for all handles
   
+  // Check if name is empty
+  const hasName = data.firstName || data.lastName;
+  const displayName = hasName 
+    ? `${data.firstName || ''} ${data.lastName || ''}`.trim()
+    : '(Click to edit)';
+  
   return (
     <div style={{
       border: `3px solid ${borderColor}`,
@@ -21,7 +27,7 @@ export function PersonNode({ data, isConnectable, selected }) {
       background: '#fff',
       width: '180px',
       boxShadow: selected 
-        ? '0 0 0 3px #3b82f6, 0 2px 8px rgba(0,0,0,0.15)'  // Blue glow when selected
+        ? '0 0 0 3px #3b82f6, 0 2px 8px rgba(0,0,0,0.15)'
         : '0 2px 8px rgba(0,0,0,0.15)',
       overflow: 'hidden',
       transition: 'box-shadow 0.2s ease',
@@ -90,7 +96,7 @@ export function PersonNode({ data, isConnectable, selected }) {
       }}>
         <img 
           src={photoPlaceholder} 
-          alt={`${data.firstName} ${data.lastName}`}
+          alt={displayName}
           style={{
             width: '100%',
             height: '100%',
@@ -109,9 +115,11 @@ export function PersonNode({ data, isConnectable, selected }) {
           fontWeight: 'bold', 
           fontSize: '14px',
           marginBottom: '8px',
-          textAlign: 'center'
+          textAlign: 'center',
+          color: hasName ? '#000' : '#999',
+          fontStyle: hasName ? 'normal' : 'italic',
         }}>
-          {data.firstName} {data.lastName}
+          {displayName}
         </div>
         
         {data.birthDate && (

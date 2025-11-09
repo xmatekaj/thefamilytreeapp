@@ -344,8 +344,8 @@ export function FamilyTreeFlow() {
       const position = findEmptySpace();
       
       const person = new Person({
-        firstName: 'New',
-        lastName: 'Person',
+        firstName: t('newPerson'),  // Changed from 'New'
+        lastName: '',               // Changed from 'Person'
         generation: position.generation,
         positionX: position.x,
         positionY: position.y,
@@ -375,6 +375,7 @@ export function FamilyTreeFlow() {
       alert('Failed to add person: ' + error.message);
     }
   };
+
 
   const clearDatabase = async () => {
     if (!confirm('Are you sure you want to clear all data? This cannot be undone.')) {
