@@ -39,7 +39,7 @@ export function PersonNode({ data, isConnectable }) {
         }}
       />
       
-      {/* Spouse connections - LEFT (both source and target for bi-directional) */}
+      {/* Spouse LEFT - source only, but we'll allow reverse in connection validator */}
       <Handle
         type="source"
         position={Position.Left}
@@ -54,30 +54,12 @@ export function PersonNode({ data, isConnectable }) {
           top: '50%',
           left: '-10px',
           cursor: 'crosshair',
-          zIndex: 10,
-        }}
-      />
-      <Handle
-        type="target"
-        position={Position.Left}
-        id="spouse-left-target"
-        isConnectable={isConnectable}
-        style={{ 
-          background: '#ef4444', 
-          width: handleSize, 
-          height: handleSize,
-          border: '2px solid white',
-          borderRadius: '50%',
-          top: '50%',
-          left: '-10px',
-          cursor: 'crosshair',
-          zIndex: 10,
         }}
       />
 
-      {/* Spouse connections - RIGHT (both source and target for bi-directional) */}
+      {/* Spouse RIGHT - target only, but we'll allow reverse in connection validator */}
       <Handle
-        type="source"
+        type="target"
         position={Position.Right}
         id="spouse-right"
         isConnectable={isConnectable}
@@ -90,24 +72,6 @@ export function PersonNode({ data, isConnectable }) {
           top: '50%',
           right: '-10px',
           cursor: 'crosshair',
-          zIndex: 10,
-        }}
-      />
-      <Handle
-        type="target"
-        position={Position.Right}
-        id="spouse-right-target"
-        isConnectable={isConnectable}
-        style={{ 
-          background: '#ef4444', 
-          width: handleSize, 
-          height: handleSize,
-          border: '2px solid white',
-          borderRadius: '50%',
-          top: '50%',
-          right: '-10px',
-          cursor: 'crosshair',
-          zIndex: 10,
         }}
       />
       
