@@ -36,45 +36,39 @@ export function PersonNode({ data, isConnectable }) {
         }}
       />
       
-      {/* Spouse connections - left side STARTS connections */}
+      {/* Spouse LEFT - both source and target */}
       <Handle
         type="source"
         position={Position.Left}
         id="spouse-left"
         isConnectable={isConnectable}
-        isConnectableStart={true}
-        isConnectableEnd={false}
         style={{ 
           background: '#ef4444', 
-          width: '16px', 
-          height: '16px',
+          width: '24px', 
+          height: '24px',
           border: '2px solid white',
           borderRadius: '50%',
           top: '50%',
-          left: '-8px',
+          left: '-12px',
           cursor: 'crosshair',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
         }}
       />
-      
-      {/* Spouse connections - right side RECEIVES connections */}
+
+      {/* Spouse RIGHT - both source and target */}
       <Handle
         type="target"
         position={Position.Right}
         id="spouse-right"
         isConnectable={isConnectable}
-        isConnectableStart={false}
-        isConnectableEnd={true}
         style={{ 
           background: '#ef4444', 
-          width: '16px', 
-          height: '16px',
+          width: '24px', 
+          height: '24px',
           border: '2px solid white',
           borderRadius: '50%',
           top: '50%',
-          right: '-8px',
+          right: '-12px',
           cursor: 'crosshair',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
         }}
       />
       

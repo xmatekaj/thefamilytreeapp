@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
+import { getTranslation } from '../../../shared-core/i18n/translations.js';
 import ReactFlow, {
   addEdge,
   Background,
@@ -25,6 +26,9 @@ const edgeTypes = {
   relationship: RelationshipEdge,
 };
 
+const [lang, setLang] = useState('en');
+const t = useTranslation(lang);
+
 // Layout constants
 const VERTICAL_SPACING = 350; // Space between generations
 const HORIZONTAL_SPACING = 250; // Space between people in same generation
@@ -36,7 +40,11 @@ export function FamilyTreeFlow() {
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [pendingRelationship, setPendingRelationship] = useState(null);
   const [selectedRelationship, setSelectedRelationship] = useState(null);
+  const [lang, setLang] = useState('en');
   const positionCounterRef = useRef({});
+
+  // Create translation function
+  const t = (key) => getTranslation(lang, key);
 
   useEffect(() => {
     initDatabase();
@@ -199,9 +207,14 @@ export function FamilyTreeFlow() {
           },
         };
       });
+      
+      const validNodeIds = new Set(newNodes.map(n => n.id));
+      const validEdges = newEdges.filter(e => 
+        validNodeIds.has(e.source) && validNodeIds.has(e.target)
+      );
 
       setNodes(newNodes);
-      setEdges(newEdges);
+      setEdges(validEdges);
       console.log('Family tree loaded successfully');
     } catch (error) {
       console.error('Failed to load family tree:', error);
@@ -821,8 +834,9 @@ export function FamilyTreeFlow() {
         onSave={handleSavePerson}
         onCancel={() => setSelectedPerson(null)}
         onDelete={handleDeletePerson}
+        t={t}
       />
-      
+
       <RelationshipEditModal
         relationship={relationshipForModal}
         onSave={handleSaveRelationship}
@@ -831,6 +845,7 @@ export function FamilyTreeFlow() {
           setSelectedRelationship(null);
         }}
         onDelete={handleDeleteRelationship}
+        t={t}
       />
     </div>
   );
