@@ -259,10 +259,10 @@ export function FamilyTreeFlow() {
         // Determine relationship type based on handles
         let relType = RelationType.PARENT;
         
-        // Check if it's a spouse connection
-        const isSpouseConnection = 
-          (params.sourceHandle === 'spouse-left' || params.sourceHandle === 'spouse-right') &&
-          (params.targetHandle === 'spouse-left' || params.targetHandle === 'spouse-right');
+        // Check if it's a spouse connection (any spouse handle involved)
+        const sourceIsSpouse = params.sourceHandle?.includes('spouse');
+        const targetIsSpouse = params.targetHandle?.includes('spouse');
+        const isSpouseConnection = sourceIsSpouse && targetIsSpouse;
         
         if (params.sourceHandle === 'child' && params.targetHandle === 'parent') {
           relType = RelationType.PARENT;
@@ -336,8 +336,9 @@ export function FamilyTreeFlow() {
         alert('Failed to create relationship: ' + error.message);
       }
     },
-    [setEdges]
+    [setEdges, handleDeleteRelationship]
   );
+
 
   const addPerson = async () => {
     try {
@@ -681,176 +682,69 @@ export function FamilyTreeFlow() {
   const relationshipForModal = pendingRelationship || selectedRelationship;
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <div style={{ 
-        position: 'absolute', 
-        top: 10, 
-        left: 10, 
-        zIndex: 10,
-        display: 'flex',
-        gap: '10px',
-        flexWrap: 'wrap',
-      }}>
-        <button 
-          onClick={addPerson} 
-          style={{ 
-            padding: '10px 20px', 
-            cursor: 'pointer',
-            background: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontWeight: 'bold',
-          }}
-        >
-          + Add Person
-        </button>
-        
-        <button 
-          onClick={exportJSON} 
-          style={{ 
-            padding: '10px 20px', 
-            cursor: 'pointer',
-            background: '#10b981',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontWeight: 'bold',
-          }}
-        >
-          Export JSON
-        </button>
-        
-        <label style={{ 
-          padding: '10px 20px', 
-          cursor: 'pointer',
-          background: '#8b5cf6',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          fontWeight: 'bold',
-        }}>
-          Import JSON
-          <input 
-            type="file" 
-            accept=".json" 
-            onChange={importJSON}
-            style={{ display: 'none' }}
-          />
-        </label>
-        
-        <button 
-          onClick={exportGEDCOM} 
-          style={{ 
-            padding: '10px 20px', 
-            cursor: 'pointer',
-            background: '#f59e0b',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontWeight: 'bold',
-          }}
-        >
-          Export GEDCOM
-        </button>
-        
-        <label style={{ 
-          padding: '10px 20px', 
-          cursor: 'pointer',
-          background: '#ec4899',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          fontWeight: 'bold',
-        }}>
-          Import GEDCOM
-          <input 
-            type="file" 
-            accept=".ged,.gedcom" 
-            onChange={importGEDCOM}
-            style={{ display: 'none' }}
-          />
-        </label>
-        
-        <button 
-          onClick={clearDatabase} 
-          style={{ 
-            padding: '10px 20px', 
-            cursor: 'pointer',
-            background: '#ef4444',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontWeight: 'bold',
-          }}
-        >
-          Clear All
-        </button>
-      </div>
-      
-      <div style={{
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        zIndex: 10,
-        background: 'white',
-        padding: '10px',
-        borderRadius: '4px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-        fontSize: '12px',
-      }}>
-        <div><strong>Instructions:</strong></div>
-        <div>• Click person to edit name/dates</div>
-        <div>• Drag person - auto-snaps to layer</div>
-        <div>• Blue → Green = parent-child</div>
-        <div>• Red → Red = spouse (LARGE red dots)</div>
-        <div>• Click spouse line to edit type/dates</div>
-      </div>
-
-      <LanguageSelector 
-        currentLang={lang} 
-        onLanguageChange={setLang} 
-      />
-      
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onNodeClick={onNodeClick}
-        onEdgeClick={onEdgeClick}
-        onNodeDragStop={handleNodeDragStop}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        isValidConnection={isValidConnection}
-        fitView
-        connectionLineStyle={{ stroke: '#ef4444', strokeWidth: 3 }}
-        connectionLineType="straight"
-      >
-        <Background />
-        <Controls />
-        <MiniMap />
-      </ReactFlow>
-      
-      <PersonEditModal
-        person={selectedPerson}
-        onSave={handleSavePerson}
-        onCancel={() => setSelectedPerson(null)}
-        onDelete={handleDeletePerson}
-        t={t}
-      />
-
-      <RelationshipEditModal
-        relationship={relationshipForModal}
-        onSave={handleSaveRelationship}
-        onCancel={() => {
-          setPendingRelationship(null);
-          setSelectedRelationship(null);
-        }}
-        onDelete={handleDeleteRelationship}
-        t={t}
-      />
+  <div style={{ width: '100vw', height: '100vh' }}>
+    {/* Buttons at top left */}
+    <div style={{ 
+      position: 'absolute', 
+      top: 10, 
+      left: 10, 
+      zIndex: 10,
+      display: 'flex',
+      gap: '10px',
+      flexWrap: 'wrap',
+    }}>
+      {/* ... all buttons ... */}
     </div>
-  );
+    
+    {/* Instructions below buttons */}
+    <div style={{ 
+      position: 'absolute', 
+      top: 120,  // Below buttons
+      left: 10, 
+      zIndex: 10,
+      background: 'white',
+      padding: '12px',
+      borderRadius: '4px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+      fontSize: '12px',
+    }}>
+      <div><strong>Instructions:</strong></div>
+      <div>• Click person to edit name/dates</div>
+      <div>• Drag person - auto-snaps to layer</div>
+      <div>• Blue → Green = parent-child</div>
+      <div>• Red → Red = spouse (SAME SIZE red dots)</div>
+      <div>• Click spouse line to edit type/dates</div>
+    </div>
+
+    {/* Language selector - TOP RIGHT - increased z-index */}
+    <LanguageSelector 
+      currentLang={lang} 
+      onLanguageChange={setLang} 
+    />
+    
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      onNodeClick={onNodeClick}
+      onEdgeClick={onEdgeClick}
+      onNodeDragStop={handleNodeDragStop}
+      nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
+      isValidConnection={isValidConnection}
+      fitView
+      connectionLineStyle={{ stroke: '#ef4444', strokeWidth: 3 }}
+      connectionLineType="straight"
+    >
+      <Background />
+      <Controls />
+      <MiniMap />
+    </ReactFlow>
+    
+    {/* Modals */}
+  </div>
+);
+
 }

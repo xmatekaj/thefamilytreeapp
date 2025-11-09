@@ -12,6 +12,8 @@ export function PersonNode({ data, isConnectable }) {
     borderColor = '#ec4899'; // Pink
   }
   
+  const handleSize = '20px'; // Same size for all handles
+  
   return (
     <div style={{
       border: `3px solid ${borderColor}`,
@@ -29,14 +31,15 @@ export function PersonNode({ data, isConnectable }) {
         isConnectable={isConnectable}
         style={{ 
           background: '#10b981', 
-          width: '16px', 
-          height: '16px',
+          width: handleSize, 
+          height: handleSize,
           borderRadius: '50%',
-          border: '2px solid white'
+          border: '2px solid white',
+          cursor: 'crosshair'
         }}
       />
       
-      {/* Spouse LEFT - both source and target */}
+      {/* Spouse connections - LEFT (both source and target for bi-directional) */}
       <Handle
         type="source"
         position={Position.Left}
@@ -44,31 +47,67 @@ export function PersonNode({ data, isConnectable }) {
         isConnectable={isConnectable}
         style={{ 
           background: '#ef4444', 
-          width: '24px', 
-          height: '24px',
+          width: handleSize, 
+          height: handleSize,
           border: '2px solid white',
           borderRadius: '50%',
           top: '50%',
-          left: '-12px',
+          left: '-10px',
           cursor: 'crosshair',
+          zIndex: 10,
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="spouse-left-target"
+        isConnectable={isConnectable}
+        style={{ 
+          background: '#ef4444', 
+          width: handleSize, 
+          height: handleSize,
+          border: '2px solid white',
+          borderRadius: '50%',
+          top: '50%',
+          left: '-10px',
+          cursor: 'crosshair',
+          zIndex: 10,
         }}
       />
 
-      {/* Spouse RIGHT - both source and target */}
+      {/* Spouse connections - RIGHT (both source and target for bi-directional) */}
       <Handle
-        type="target"
+        type="source"
         position={Position.Right}
         id="spouse-right"
         isConnectable={isConnectable}
         style={{ 
           background: '#ef4444', 
-          width: '24px', 
-          height: '24px',
+          width: handleSize, 
+          height: handleSize,
           border: '2px solid white',
           borderRadius: '50%',
           top: '50%',
-          right: '-12px',
+          right: '-10px',
           cursor: 'crosshair',
+          zIndex: 10,
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="spouse-right-target"
+        isConnectable={isConnectable}
+        style={{ 
+          background: '#ef4444', 
+          width: handleSize, 
+          height: handleSize,
+          border: '2px solid white',
+          borderRadius: '50%',
+          top: '50%',
+          right: '-10px',
+          cursor: 'crosshair',
+          zIndex: 10,
         }}
       />
       
@@ -129,10 +168,11 @@ export function PersonNode({ data, isConnectable }) {
         isConnectable={isConnectable}
         style={{ 
           background: '#3b82f6', 
-          width: '16px', 
-          height: '16px',
+          width: handleSize, 
+          height: handleSize,
           borderRadius: '50%',
-          border: '2px solid white'
+          border: '2px solid white',
+          cursor: 'crosshair'
         }}
       />
     </div>
