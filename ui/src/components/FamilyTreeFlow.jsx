@@ -1,5 +1,6 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { getTranslation } from '../../../shared-core/i18n/translations.js';
+import { LanguageSelector } from './LanguageSelector';
 import ReactFlow, {
   addEdge,
   Background,
@@ -26,8 +27,7 @@ const edgeTypes = {
   relationship: RelationshipEdge,
 };
 
-const [lang, setLang] = useState('en');
-const t = useTranslation(lang);
+
 
 // Layout constants
 const VERTICAL_SPACING = 350; // Space between generations
@@ -42,7 +42,6 @@ export function FamilyTreeFlow() {
   const [selectedRelationship, setSelectedRelationship] = useState(null);
   const [lang, setLang] = useState('en');
   const positionCounterRef = useRef({});
-
   // Create translation function
   const t = (key) => getTranslation(lang, key);
 
@@ -807,6 +806,11 @@ export function FamilyTreeFlow() {
         <div>• Red → Red = spouse (LARGE red dots)</div>
         <div>• Click spouse line to edit type/dates</div>
       </div>
+
+      <LanguageSelector 
+        currentLang={lang} 
+        onLanguageChange={setLang} 
+      />
       
       <ReactFlow
         nodes={nodes}

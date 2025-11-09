@@ -1,7 +1,27 @@
 import { useState, useEffect } from 'react';
 import { Gender } from '../../../shared-core/models/Person.js';
 
-export function PersonEditModal({ person, onSave, onCancel, onDelete, t }) {
+export function PersonEditModal({ person, onSave, onCancel, onDelete, t, lang }) {
+  // Convert date from YYYY-MM-DD to DD-MM-YYYY for Polish
+  const formatDateForInput = (date) => {
+    if (!date) return '';
+    if (lang === 'pl') {
+      const [year, month, day] = date.split('-');
+      return `${day}-${month}-${year}`;
+    }
+    return date;
+  };
+
+  // Convert date from DD-MM-YYYY back to YYYY-MM-DD for storage
+  const formatDateForSave = (date) => {
+    if (!date) return '';
+    if (lang === 'pl') {
+      const [day, month, year] = date.split('-');
+      return `${year}-${month}-${day}`;
+    }
+    return date;
+  };
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
