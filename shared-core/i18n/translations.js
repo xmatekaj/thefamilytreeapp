@@ -31,6 +31,11 @@ export const translations = {
     male: 'Male',
     female: 'Female',
     other: 'Other',
+    blue_border: 'Blue border',
+    pink_border: 'Pink border',
+    
+    // Person defaults
+    newPerson: 'New Person',
     
     // Modals
     editPerson: 'Edit Person',
@@ -57,7 +62,7 @@ export const translations = {
     clickPersonToEdit: 'Click person to edit name/dates',
     dragPerson: 'Drag person - auto-snaps to layer',
     blueToGreen: 'Blue → Green = parent-child',
-    redToRed: 'Red → Red = spouse (LARGE red dots)',
+    redToRed: 'Red → Red = spouse (same size dots)',
     clickSpouseLine: 'Click spouse line to edit type/dates',
     hoverToDelete: 'Hover connection to delete',
     
@@ -120,12 +125,16 @@ export const translations = {
     gender: 'Płeć',
     male: 'Mężczyzna',
     female: 'Kobieta',
+    blue_border: 'niebieska ramka',
+    pink_border: 'różowa ramka',
     other: 'Inna',
+    
+    // Person defaults
+    newPerson: 'Nowa Osoba',
     
     // Modals
     editPerson: 'Edytuj Osobę',
     editRelationship: 'Edytuj Związek',
-    newPerson: 'Nowa',
     person: 'Osoba',
     
     // Relationships
@@ -147,7 +156,7 @@ export const translations = {
     clickPersonToEdit: 'Kliknij osobę aby edytować nazwę/daty',
     dragPerson: 'Przeciągnij osobę - automatycznie przyciąga do warstwy',
     blueToGreen: 'Niebieski → Zielony = rodzic-dziecko',
-    redToRed: 'Czerwony → Czerwony = małżonek (DUŻE czerwone kropki)',
+    redToRed: 'Czerwony → Czerwony = małżonek (tej samej wielkości kropki)',
     clickSpouseLine: 'Kliknij linię małżonka aby edytować typ/daty',
     hoverToDelete: 'Najedź na połączenie aby usunąć',
     

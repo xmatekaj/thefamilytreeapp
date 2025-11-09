@@ -2,26 +2,6 @@ import { useState, useEffect } from 'react';
 import { Gender } from '../../../shared-core/models/Person.js';
 
 export function PersonEditModal({ person, onSave, onCancel, onDelete, t, lang }) {
-  // Convert date from YYYY-MM-DD to DD-MM-YYYY for Polish
-  const formatDateForInput = (date) => {
-    if (!date) return '';
-    if (lang === 'pl') {
-      const [year, month, day] = date.split('-');
-      return `${day}-${month}-${year}`;
-    }
-    return date;
-  };
-
-  // Convert date from DD-MM-YYYY back to YYYY-MM-DD for storage
-  const formatDateForSave = (date) => {
-    if (!date) return '';
-    if (lang === 'pl') {
-      const [day, month, year] = date.split('-');
-      return `${year}-${month}-${day}`;
-    }
-    return date;
-  };
-
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -143,19 +123,21 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete, t, lang })
               <option value={Gender.FEMALE}>{t('female')}</option>
             </select>
             <small style={{ color: '#666' }}>
-              {t('male')}: Blue border, {t('female')}: Pink border
+              {t('male')}: {t('blue_border')}, {t('female')}: {t('pink_border')}
             </small>
           </div>
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              {t('birthDate')}
+              {t('birthDate')} {lang === 'pl' && <small>(dd-mm-rrrr)</small>}
             </label>
             <input
-              type="date"
+              type={lang === 'pl' ? 'text' : 'date'}
               name="birthDate"
               value={formData.birthDate}
               onChange={handleChange}
+              placeholder={lang === 'pl' ? 'dd-mm-rrrr' : ''}
+              pattern={lang === 'pl' ? '\\d{2}-\\d{2}-\\d{4}' : undefined}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -164,17 +146,24 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete, t, lang })
                 fontSize: '14px',
               }}
             />
+            {lang === 'pl' && (
+              <small style={{ color: '#666', display: 'block', marginTop: '4px' }}>
+                Format: dzień-miesiąc-rok (np. 15-03-1990)
+              </small>
+            )}
           </div>
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              {t('deathDate')}
+              {t('deathDate')} {lang === 'pl' && <small>(dd-mm-rrrr)</small>}
             </label>
             <input
-              type="date"
+              type={lang === 'pl' ? 'text' : 'date'}
               name="deathDate"
               value={formData.deathDate}
               onChange={handleChange}
+              placeholder={lang === 'pl' ? 'dd-mm-rrrr' : ''}
+              pattern={lang === 'pl' ? '\\d{2}-\\d{2}-\\d{4}' : undefined}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -183,6 +172,11 @@ export function PersonEditModal({ person, onSave, onCancel, onDelete, t, lang })
                 fontSize: '14px',
               }}
             />
+            {lang === 'pl' && (
+              <small style={{ color: '#666', display: 'block', marginTop: '4px' }}>
+                Format: dzień-miesiąc-rok (np. 20-12-2020)
+              </small>
+            )}
           </div>
 
           <div style={{ marginBottom: '20px' }}>
