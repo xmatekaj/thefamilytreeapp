@@ -510,6 +510,7 @@ export function FamilyTreeFlow() {
       person.deathDate = formData.deathDate;
       person.photo = formData.photo;
       person.gender = formData.gender;
+      person.maidenName = formData.maidenName; 
       
       await db.updatePerson(person);
       setSelectedPerson(null);
@@ -526,6 +527,7 @@ export function FamilyTreeFlow() {
               deathDate: person.deathDate,
               photo: person.photo,
               gender: person.gender,
+              maidenName: person.maidenName,
             },
           };
         }
