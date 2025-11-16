@@ -4,6 +4,13 @@ A cross-platform family tree application built with Tauri, React, and React Flow
 
 Work in progress.
 
+## Todo
+- [ ] Better looking connections
+- [ ] Improve tranlation
+- [ ] Change rectangle <-> circle
+- [ ] Show/Hide sections
+- [ ] Add configuration to show what's displayed.
+
 
 ![Web](screenshot.png)
 
