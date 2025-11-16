@@ -7,8 +7,6 @@ Work in progress.
 
 ![Web](screenshot.png)
 
-![Tauri](screenshot2.png)
-
 ## Tech Stack
 
 - **Frontend**: React + React Flow
