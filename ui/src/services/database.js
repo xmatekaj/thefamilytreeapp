@@ -13,7 +13,8 @@ class DatabaseService {
     console.log('Initializing database, isTauri:', this.isTauri);
 
     if (this.isTauri) {
-      const { invoke } = await import('@tauri-apps/api/tauri');
+      // Tauri 2.x uses @tauri-apps/api/core instead of @tauri-apps/api/tauri
+      const { invoke } = await import('@tauri-apps/api/core');
       this.db = new SQLiteDatabase();
       this.db.setInvoke(invoke);
     } else {

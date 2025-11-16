@@ -32,7 +32,6 @@ export class Relationship {
     
     // For spouse relationships
     this.spouseType = data.spouseType || null; // SpouseRelationType
-    this.marriageNumber = data.marriageNumber || null; // 1, 2, 3, etc.
     this.startDate = data.startDate || null; // ISO date string
     this.endDate = data.endDate || null; // ISO date string
     this.color = data.color || this.generateColor(); // Hex color
@@ -57,7 +56,6 @@ export class Relationship {
       toPersonId: this.toPersonId,
       type: this.type,
       spouseType: this.spouseType,
-      marriageNumber: this.marriageNumber,
       startDate: this.startDate,
       endDate: this.endDate,
       color: this.color,
