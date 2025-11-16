@@ -5,7 +5,9 @@ A cross-platform family tree application built with Tauri, React, and React Flow
 Work in progress.
 
 
-![title](screenshot.png)
+![Web](screenshot.png)
+
+![Tauri](screenshot2.png)
 
 ## Tech Stack
 
